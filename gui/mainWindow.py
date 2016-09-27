@@ -26,6 +26,7 @@ class MainApp(Gtk.Window, Render):
         Render.__init__(self,n, front, back)
 
         # Title and window stuff
+        self.set_border_width(3)
         self.set_title("Fractures")
         self.resize(width,height)
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -88,9 +89,18 @@ class MainApp(Gtk.Window, Render):
         
         self.vbox.pack_start(self.domain, False, False, True)
 
+        # Start algorithm button
+        startButton = Gtk.Button.new_with_label("Start")
+        startButton.connect("clicked", self.startAlgorithm)
+        
+
     # What to do when the selection changes in the list of domain options
     def onSelectionChange(self, combo):
         treeiter = combo.get_active_iter()
         if treeiter != None:
             model = combo.get_model()
             print("Selected:",model[treeiter][0])
+
+    # This function will call the algorithm
+    def startAlgorithm(self):
+        print("At this point, the algorithm will be executed.")
