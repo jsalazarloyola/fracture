@@ -88,6 +88,8 @@ class MainApp(Gtk.Window, Render):
         image.set_from_pixbuf(imageBuff)
         vgrid.add(image)
 
+        ########################################
+        # Inputs as entries
         # Size of... something.
         sizeLabel = Gtk.Label("Size")
         self.sizeEntry = Gtk.Entry()
@@ -115,7 +117,7 @@ class MainApp(Gtk.Window, Render):
         distanceLabel = Gtk.Label("Distance")
         self.distanceEntry = Gtk.Entry()
         self.distanceEntry.set_text("Distance")
-        self.inputsDict["distance"] = self.distance
+        self.inputsDict["distance"] = self.distanceEntry
         vgrid.add(distanceLabel)
         vgrid.add(self.distanceEntry)
         
@@ -127,6 +129,7 @@ class MainApp(Gtk.Window, Render):
         vgrid.add(sourceLabel)
         vgrid.add(self.sourceNumber)
 
+        ########################################
         # Frequency information
         #separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         self.frequency = Gtk.Entry()
@@ -161,6 +164,7 @@ class MainApp(Gtk.Window, Render):
         vgrid.add(domainLabel)
         vgrid.add(self.domain)
 
+        ########################################
         # Start algorithm button
         startButton = Gtk.Button.new_with_label("Start")
         startButton.connect("clicked", self.startAlgorithm)
@@ -188,5 +192,9 @@ class MainApp(Gtk.Window, Render):
     def startAlgorithm(self, button):
         # Remember in the future to stop spinning
         self.runSpinner.start()
+        # All the fields will be disabled
+        for key in self.inputsDict:
+            self.inputsDict[key].set_editable(False)
+            
         print("At this point, the algorithm will be executed.")
         
