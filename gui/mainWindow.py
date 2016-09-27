@@ -60,28 +60,28 @@ class MainApp(Gtk.Window, Render):
     #       -Add labels to everything
     #       -Figure a way to have a default value for the ComboBox
     def __createInputs(self):
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
-                           spacing=6)
+        vgrid = Gtk.Grid()
+        vgrid.set_orientation(Gtk.Orientation.VERTICAL)
 
         # Speed of fracture
         self.speedEntry = Gtk.Entry()
         self.speedEntry.set_text("Speed of fractures")
-        vbox.pack_start(self.speedEntry, True, False, 0)
+        vgrid.add(self.speedEntry)
 
         # Size of... something.
         self.sizeEntry = Gtk.Entry()
         self.sizeEntry.set_text("Size")
-        vbox.pack_start(self.sizeEntry, True, False, 0)
+        vgrid.add(self.sizeEntry)
 
         # Distance of source?
         self.distanceEntry = Gtk.Entry()
         self.distanceEntry.set_text("Distance")
-        vbox.pack_start(self.distanceEntry, True, False, 0)
+        vgrid.add(self.distanceEntry)
         
         # Number of sources
         self.sourceNumber = Gtk.Entry()
         self.sourceNumber.set_text("Sources number")
-        vbox.pack_start(self.sourceNumber, True, False, 0)
+        vgrid.add(self.sourceNumber)
 
         domainStore = Gtk.ListStore(str, str)
         domainStore.append(['circ', 'Circle'])
@@ -94,7 +94,7 @@ class MainApp(Gtk.Window, Render):
         self.domain.pack_start(renderer, True)
         self.domain.add_attribute(renderer, "text", 1)
         
-        vbox.pack_start(self.domain, False, False, True)
+        vgrid.add(self.domain)
 
         # Start algorithm button
         startButton = Gtk.Button.new_with_label("Start")
@@ -104,11 +104,13 @@ class MainApp(Gtk.Window, Render):
         #table.attach(startButton, 1, 0, 1, 1)
         #table.attach(self.runSpinner, 1, 2, 2, 3)
         # The button stays at the end
-        vbox.pack_end(self.runSpinner, False, False, False)
-        vbox.pack_end(startButton, False, False, False)
+        #vgrid.pack_end(self.runSpinner, False, False, False)
+        #vgrid.pack_end(startButton, False, False, False)
+        vgrid.add(startButton)
+        vgrid.add(self.runSpinner)
 
         # End of function
-        return vbox
+        return vgrid
         
     # What to do when the selection changes in the list of domain options
     def onSelectionChange(self, combo):
