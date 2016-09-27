@@ -1,5 +1,8 @@
 2016-09-27  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
+	* gui/widgets.py: Created module for new widgets
+	(NumberEntry): Derived class from Gtk.Entry for numerical entries.
+
 	* gui/mainWindow.py (MainApp.__createInputs): Moved inputs from a
 	vertical box to a grid.
 	(MainApp.__createInputs): Created a dictionary to hold all inputs

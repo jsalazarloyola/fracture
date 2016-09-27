@@ -7,6 +7,8 @@ gi.require_version('Gtk', '3.0')
 from iutils.render import Render
 from gi.repository import Gtk
 
+from gui.widgets import NumberEntry
+
 class MainApp(Gtk.Window, Render):
     """Main window for the program
 
@@ -92,14 +94,14 @@ class MainApp(Gtk.Window, Render):
         # Inputs as entries
         # Size of... something.
         sizeLabel = Gtk.Label("Size")
-        self.sizeEntry = Gtk.Entry()
+        self.sizeEntry = NumberEntry()
         self.sizeEntry.set_text("Size")
         self.inputsDict["size"] = self.sizeEntry
         vgrid.add(sizeLabel)
         vgrid.add(self.sizeEntry)
         
         # Stroke width, whatever that is
-        self.strokeWidth = Gtk.Entry()
+        self.strokeWidth = NumberEntry()
         self.strokeWidth.set_text("Stroke")
         self.inputsDict["stroke"] = self.strokeWidth
         vgrid.add(Gtk.Label("Stroke width"))
@@ -107,7 +109,7 @@ class MainApp(Gtk.Window, Render):
 
         # Speed of fracture
         speedLabel = Gtk.Label("Speed")
-        self.speedEntry = Gtk.Entry()
+        self.speedEntry = NumberEntry()
         self.speedEntry.set_text("Speed of fractures")
         self.inputsDict["speed"] = self.speedEntry
         vgrid.add(speedLabel)
@@ -115,7 +117,7 @@ class MainApp(Gtk.Window, Render):
 
         # Distance of source?
         distanceLabel = Gtk.Label("Distance")
-        self.distanceEntry = Gtk.Entry()
+        self.distanceEntry = NumberEntry()
         self.distanceEntry.set_text("Distance")
         self.inputsDict["distance"] = self.distanceEntry
         vgrid.add(distanceLabel)
@@ -123,7 +125,7 @@ class MainApp(Gtk.Window, Render):
         
         # Number of sources
         sourceLabel = Gtk.Label("Number of sources")
-        self.sourceNumber = Gtk.Entry()
+        self.sourceNumber = NumberEntry()
         self.sourceNumber.set_text("Sources number")
         self.inputsDict["source"] = self.sourceNumber
         vgrid.add(sourceLabel)
@@ -132,11 +134,11 @@ class MainApp(Gtk.Window, Render):
         ########################################
         # Frequency information
         #separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        self.frequency = Gtk.Entry()
+        self.frequency = NumberEntry()
         self.frequency.set_text("Frequency")
         self.inputsDict["frequency"] = self.frequency
 
-        self.freqDim = Gtk.Entry()
+        self.freqDim = NumberEntry()
         self.freqDim.set_text("Diminishing")
         self.inputsDict["freqDim"] = self.freqDim
         
