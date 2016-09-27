@@ -67,9 +67,15 @@ class MainApp(Gtk.Window, Render):
     #       -Add labels to everything
     #       -Figure a way to have a default value for the ComboBox
     def __createInputs(self):
+        # Grid which holds the elements of the interface
         vgrid = Gtk.Grid()
         vgrid.set_orientation(Gtk.Orientation.VERTICAL)
 
+        # Dictionary which holds the widgets, as the entries
+        # TODO: evaluate whether to keep the entries as dictionary only
+        #       or as members of the class
+        self.inputsDict = {}
+        
         # A nice example picture
         # TODO: get a smaller picture
         from gi.repository import GdkPixbuf
@@ -86,12 +92,14 @@ class MainApp(Gtk.Window, Render):
         sizeLabel = Gtk.Label("Size")
         self.sizeEntry = Gtk.Entry()
         self.sizeEntry.set_text("Size")
+        self.inputsDict["size"] = self.sizeEntry
         vgrid.add(sizeLabel)
         vgrid.add(self.sizeEntry)
-
+        
         # Stroke width, whatever that is
         self.strokeWidth = Gtk.Entry()
         self.strokeWidth.set_text("Stroke")
+        self.inputsDict["stroke"] = self.strokeWidth
         vgrid.add(Gtk.Label("Stroke width"))
         vgrid.add(self.strokeWidth)
 
@@ -99,6 +107,7 @@ class MainApp(Gtk.Window, Render):
         speedLabel = Gtk.Label("Speed")
         self.speedEntry = Gtk.Entry()
         self.speedEntry.set_text("Speed of fractures")
+        self.inputsDict["speed"] = self.speedEntry
         vgrid.add(speedLabel)
         vgrid.add(self.speedEntry)
 
@@ -106,6 +115,7 @@ class MainApp(Gtk.Window, Render):
         distanceLabel = Gtk.Label("Distance")
         self.distanceEntry = Gtk.Entry()
         self.distanceEntry.set_text("Distance")
+        self.inputsDict["distance"] = self.distance
         vgrid.add(distanceLabel)
         vgrid.add(self.distanceEntry)
         
@@ -113,6 +123,7 @@ class MainApp(Gtk.Window, Render):
         sourceLabel = Gtk.Label("Number of sources")
         self.sourceNumber = Gtk.Entry()
         self.sourceNumber.set_text("Sources number")
+        self.inputsDict["source"] = self.sourceNumber
         vgrid.add(sourceLabel)
         vgrid.add(self.sourceNumber)
 
@@ -120,9 +131,11 @@ class MainApp(Gtk.Window, Render):
         #separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         self.frequency = Gtk.Entry()
         self.frequency.set_text("Frequency")
+        self.inputsDict["frequency"] = self.frequency
 
         self.freqDim = Gtk.Entry()
         self.freqDim.set_text("Diminishing")
+        self.inputsDict["freqDim"] = self.freqDim
         
         #vgrid.add(separator)
         vgrid.add(Gtk.Label("Frequency of fractures"))

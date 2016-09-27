@@ -2,6 +2,7 @@
 
 	* gui/mainWindow.py (MainApp.__createInputs): Moved inputs from a
 	vertical box to a grid.
+	(MainApp.__createInputs): Created a dictionary to hold all inputs
 
 2016-09-26  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
