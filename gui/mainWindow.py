@@ -25,14 +25,17 @@ class MainApp(Gtk.Window, Render):
         n = int(height*0.9)
         Render.__init__(self,n, front, back)
 
+        border = 5
+        #self.inputSpace = width - n - 2*border
+        
         # Title and window stuff
-        self.set_border_width(5)
+        self.set_border_width(border)
         self.set_title("Fractures")
         self.resize(width,height)
         self.set_position(Gtk.WindowPosition.CENTER)
 
         # Maybe this should be more complex in the future
-        self.connect("destroy", Gtk.main_quit)
+        self.connect("destroy", self.__quit)
 
         # Call the input creations
         self.inputGrid = self.__createInputs()
@@ -51,6 +54,10 @@ class MainApp(Gtk.Window, Render):
 
         #def expose(self, widget, event):
 
+    # Function to finish the program
+    def __quit(self, button=None):
+        Gtk.main_quit()
+        
     # Main loop
     def start(self):
         Gtk.main()
@@ -63,26 +70,69 @@ class MainApp(Gtk.Window, Render):
         vgrid = Gtk.Grid()
         vgrid.set_orientation(Gtk.Orientation.VERTICAL)
 
-        # Speed of fracture
-        self.speedEntry = Gtk.Entry()
-        self.speedEntry.set_text("Speed of fractures")
-        vgrid.add(self.speedEntry)
+        # A nice example picture
+        # TODO: get a smaller picture
+        from gi.repository import GdkPixbuf
+        imageName = './img/img1.png'
+        imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
+                                                            width=200,
+                                                            height=200,
+                                                            preserve_aspect_ratio=True)
+        image = Gtk.Image()
+        image.set_from_pixbuf(imageBuff)
+        vgrid.add(image)
 
         # Size of... something.
+        sizeLabel = Gtk.Label("Size")
         self.sizeEntry = Gtk.Entry()
         self.sizeEntry.set_text("Size")
+        vgrid.add(sizeLabel)
         vgrid.add(self.sizeEntry)
 
+        # Stroke width, whatever that is
+        self.strokeWidth = Gtk.Entry()
+        self.strokeWidth.set_text("Stroke")
+        vgrid.add(Gtk.Label("Stroke width"))
+        vgrid.add(self.strokeWidth)
+
+        # Speed of fracture
+        speedLabel = Gtk.Label("Speed")
+        self.speedEntry = Gtk.Entry()
+        self.speedEntry.set_text("Speed of fractures")
+        vgrid.add(speedLabel)
+        vgrid.add(self.speedEntry)
+
         # Distance of source?
+        distanceLabel = Gtk.Label("Distance")
         self.distanceEntry = Gtk.Entry()
         self.distanceEntry.set_text("Distance")
+        vgrid.add(distanceLabel)
         vgrid.add(self.distanceEntry)
         
         # Number of sources
+        sourceLabel = Gtk.Label("Number of sources")
         self.sourceNumber = Gtk.Entry()
         self.sourceNumber.set_text("Sources number")
+        vgrid.add(sourceLabel)
         vgrid.add(self.sourceNumber)
 
+        # Frequency information
+        #separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        self.frequency = Gtk.Entry()
+        self.frequency.set_text("Frequency")
+
+        self.freqDim = Gtk.Entry()
+        self.freqDim.set_text("Diminishing")
+        
+        #vgrid.add(separator)
+        vgrid.add(Gtk.Label("Frequency of fractures"))
+        vgrid.add(self.frequency)
+        vgrid.add(Gtk.Label("Frequency diminishing"))
+        vgrid.add(self.freqDim)
+
+        ########################################
+        # Domain selection
+        domainLabel = Gtk.Label("Domain")
         domainStore = Gtk.ListStore(str, str)
         domainStore.append(['circ', 'Circle'])
         domainStore.append(['rect', 'Rectangle'])
@@ -93,22 +143,24 @@ class MainApp(Gtk.Window, Render):
         renderer = Gtk.CellRendererText()
         self.domain.pack_start(renderer, True)
         self.domain.add_attribute(renderer, "text", 1)
-        
+        # Set default value
+        self.domain.set_active(0)
+        vgrid.add(domainLabel)
         vgrid.add(self.domain)
 
         # Start algorithm button
         startButton = Gtk.Button.new_with_label("Start")
         startButton.connect("clicked", self.startAlgorithm)
         self.runSpinner = Gtk.Spinner()
-        #table = Gtk.Grid()
-        #table.attach(startButton, 1, 0, 1, 1)
-        #table.attach(self.runSpinner, 1, 2, 2, 3)
-        # The button stays at the end
-        #vgrid.pack_end(self.runSpinner, False, False, False)
-        #vgrid.pack_end(startButton, False, False, False)
+
         vgrid.add(startButton)
         vgrid.add(self.runSpinner)
 
+        # Close button, just in case
+        closeButton = Gtk.Button.new_with_label("Close")
+        closeButton.connect("clicked", self.__quit)
+        vgrid.add(closeButton)
+        
         # End of function
         return vgrid
         
@@ -117,7 +169,7 @@ class MainApp(Gtk.Window, Render):
         treeiter = combo.get_active_iter()
         if treeiter != None:
             model = combo.get_model()
-            print("Selected:",model[treeiter][0])
+            print("Selected:", model[treeiter][0])
 
     # This function will call the algorithm
     def startAlgorithm(self, button):
