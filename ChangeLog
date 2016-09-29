@@ -1,5 +1,7 @@
 2016-09-29  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
+	* gui/widgets.py (NumberEntry): Add cast to float and int.
+
 	* gui/mainWindow.py (MainApp): Add expose function for drawing the
 	canvas.
 	(MainApp.show): Add show function to draw the lines through

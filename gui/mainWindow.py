@@ -240,15 +240,15 @@ class MainApp(Gtk.Window, Render):
         fracStp = 2/self.dareaSize
         
         theFractures = Fractures(
-            int(self.inputsDict["sources"].get_text()),
-            float(self.inputsDict["size"].get_text()),
-            float(self.inputsDict["distance"].get_text()),
+            int(self.inputsDict["sources"]),
+            float(self.inputsDict["size"]),
+            float(self.inputsDict["distance"]),
             fracDot,
             fracDst,
             fracStp,
-            float(self.inputsDict["speed"].get_text()),
-            float(self.inputsDict["speedDiminish"].get_text()),
-            float(self.inputsDict["spawnDim"].get_text()),
+            float(self.inputsDict["speed"]),
+            float(self.inputsDict["speedDiminish"]),
+            float(self.inputsDict["spawnDim"]),
             self.domainSelection
         )
 

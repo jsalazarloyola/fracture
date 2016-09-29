@@ -39,3 +39,17 @@ class NumberEntry(Gtk.Entry):
             self.set_text(text[0])
         else:
             self.set_text('')
+
+    def __int__(self):
+        """Cast the content to integer
+
+        If the content is float, it returns its floor
+        """
+        try:
+            return int(self.get_text())
+        except:
+            return int(float(self.get_text()))
+
+    def __float__(self):
+        """Cast the content to float"""
+        return float(self.get_text())
