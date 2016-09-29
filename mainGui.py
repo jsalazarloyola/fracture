@@ -13,6 +13,6 @@ CYAN = [0,0.5,0.5,0.2]
 BLUE = [0,0,1,0.3]
 
 if __name__ == "__main__":
-    window = MainApp(BACK,FRONT)
+    window = MainApp(BACK, FRONT, LIGHT)
 
     window.start()

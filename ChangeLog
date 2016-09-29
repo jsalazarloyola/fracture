@@ -2,6 +2,10 @@
 
 	* gui/mainWindow.py (MainApp): Add expose function for drawing the
 	canvas.
+	(MainApp.show): Add show function to draw the lines through
+	drawLines method
+	(MainApp.__createInputs): Add missing entries, remove useless
+	ones, set default values.
 
 	* gui/widgets.py (NumberEntry): Document the class
 

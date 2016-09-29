@@ -57,7 +57,7 @@ def show(render,fractures):
   render.clear_canvas()
 
   # render.ctx.set_source_rgba(*LIGHT)
-  # draw_sources()
+  #draw_sources()
 
   render.ctx.set_source_rgba(*LIGHT)
   render.set_line_width(3*LINEWIDTH)

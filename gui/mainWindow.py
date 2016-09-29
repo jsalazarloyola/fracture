@@ -17,15 +17,27 @@ class MainApp(Gtk.Window, Render):
 
     """
     def __init__(self,
-                 front, back,
+                 front, back, light,
                  step=None,
                  width=1200, height=700):
         # Window initialization
         Gtk.Window.__init__(self)
 
+        """Front line colors"""
+        self.front = front
+        """Light color
+
+        Check if this nomenclature is correct
+        """
+        self.light = light
+        
         # Render initialization
-        n = int(height*0.9)
-        Render.__init__(self,n, front, back)
+        """Size of the drawing area (pixels)"""
+        self.dareaSize = int(height*0.9)
+        """Width of the drawing lines"""
+        self.linewidth = 1.1/self.dareaSize
+        
+        Render.__init__(self, self.dareaSize, front, back)
 
         border = 5
         #self.inputSpace = width - n - 2*border
@@ -85,8 +97,8 @@ class MainApp(Gtk.Window, Render):
         from gi.repository import GdkPixbuf
         imageName = './img/img1.png'
         imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
-                                                            width=200,
-                                                            height=200,
+                                                            width=150,
+                                                            height=150,
                                                             preserve_aspect_ratio=True)
         image = Gtk.Image()
         image.set_from_pixbuf(imageBuff)
@@ -94,62 +106,74 @@ class MainApp(Gtk.Window, Render):
 
         ########################################
         # Inputs as entries
-        # Size of... something.
-        sizeLabel = Gtk.Label("Size")
-        self.sizeEntry = NumberEntry()
-        self.sizeEntry.set_text("Size")
-        self.inputsDict["size"] = self.sizeEntry
-        vgrid.add(sizeLabel)
-        vgrid.add(self.sizeEntry)
-        
-        # Stroke width, whatever that is
-        self.strokeWidth = NumberEntry()
-        self.strokeWidth.set_text("Stroke")
-        self.inputsDict["stroke"] = self.strokeWidth
-        vgrid.add(Gtk.Label("Stroke width"))
-        vgrid.add(self.strokeWidth)
-
-        # Speed of fracture
-        speedLabel = Gtk.Label("Speed")
-        self.speedEntry = NumberEntry()
-        self.speedEntry.set_text("Speed of fractures")
-        self.inputsDict["speed"] = self.speedEntry
-        vgrid.add(speedLabel)
-        vgrid.add(self.speedEntry)
-
-        # Distance of source?
-        distanceLabel = Gtk.Label("Distance")
-        self.distanceEntry = NumberEntry()
-        self.distanceEntry.set_text("Distance")
-        self.inputsDict["distance"] = self.distanceEntry
-        vgrid.add(distanceLabel)
-        vgrid.add(self.distanceEntry)
-        
         # Number of sources
         sourceLabel = Gtk.Label("Number of sources")
         self.sourceNumber = NumberEntry()
-        self.sourceNumber.set_text("Sources number")
+        self.sourceNumber.set_text("20000")
         self.inputsDict["source"] = self.sourceNumber
         vgrid.add(sourceLabel)
         vgrid.add(self.sourceNumber)
 
+        # Size of the used region
+        sizeLabel = Gtk.Label("Size")
+        self.sizeEntry = NumberEntry()
+        self.sizeEntry.set_text("0.45")
+        self.inputsDict["size"] = self.sizeEntry
+        vgrid.add(sizeLabel)
+        vgrid.add(self.sizeEntry)
+         
+        # Minimum distance between sources
+        distanceLabel = Gtk.Label("Distance")
+        self.distanceEntry = NumberEntry()
+        self.distanceEntry.set_text(str(2/self.dareaSize))
+        self.inputsDict["distance"] = self.distanceEntry
+        vgrid.add(distanceLabel)
+        vgrid.add(self.distanceEntry)
+        
+        # # Stroke width, whatever that is
+        # self.strokeWidth = NumberEntry()
+        # self.strokeWidth.set_text("Stroke")
+        # self.inputsDict["stroke"] = self.strokeWidth
+        # vgrid.add(Gtk.Label("Stroke width"))
+        # vgrid.add(self.strokeWidth)
+
         ########################################
         # Frequency information
-        #separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        self.frequency = NumberEntry()
-        self.frequency.set_text("Frequency")
-        self.inputsDict["frequency"] = self.frequency
+        # Speed of fracture
+        self.speedEntry = NumberEntry()
+        self.speedEntry.set_text("1.0")
+        self.inputsDict["speed"] = self.speedEntry
 
-        self.freqDim = NumberEntry()
-        self.freqDim.set_text("Diminishing")
-        self.inputsDict["freqDim"] = self.freqDim
+        self.speedDiminish = NumberEntry()
+        self.speedDiminish.set_text("0.997")
+        self.inputsDict["speedDiminish"] = self.speedDiminish
+
+        self.spawnDim = NumberEntry()
+        self.spawnDim.set_text("0.9")
+        self.inputsDict["spawnDim"] = self.spawnDim
         
-        #vgrid.add(separator)
-        vgrid.add(Gtk.Label("Frequency of fractures"))
-        vgrid.add(self.frequency)
-        vgrid.add(Gtk.Label("Frequency diminishing"))
-        vgrid.add(self.freqDim)
+        vgrid.add(Gtk.Label("Fracture speed"))
+        vgrid.add(self.speedEntry)
+        vgrid.add(Gtk.Label("Speed diminishing"))
+        vgrid.add(self.speedDiminish)
+        vgrid.add(Gtk.Label("Fracture spawn diminishing"))
+        vgrid.add(self.spawnDim)
 
+        ########################################
+        # Spawn angle and factor
+        self.spawnFactor = NumberEntry()
+        self.spawnFactor.set_text("2.0")
+        self.inputsDict["spawnFactor"] = self.spawnFactor
+
+        self.spawnAngle = NumberEntry()
+        self.spawnAngle.set_text("2.0")
+        self.inputsDict["spawnAngle"] = self.spawnAngle
+
+        vgrid.add(Gtk.Label("Spawn factor"))
+        vgrid.add(self.spawnFactor)
+        vgrid.add(Gtk.Label("Spawn angle"))
+        vgrid.add(self.spawnAngle)
+                
         ########################################
         # Domain selection
         domainLabel = Gtk.Label("Domain")
@@ -208,3 +232,35 @@ class MainApp(Gtk.Window, Render):
         cairoFrame = self.darea.get_property('window').cairo_create()
         cairoFrame.set_source_surface(self.sur, 0, 0)
         cairoFrame.paint()
+        return
+
+    # Function to draw lines between sources, I pressume (addapted from main.py)
+    # I don't know how to draw in Cairo, so I'm kind of blindfolded on this part.
+    # TODO: Decide whether it's better that this were on its own drawer class, as
+    #       a member of MainApp
+    def drawLines(self, fractureSet):
+        for fracture in fractureSet:
+            start = frac.inds[0]
+            self.ctx.move_to(*sources[start,:])
+            for c in frac.inds[1:]:
+                render.ctx.line_to(*sources[c,:])
+
+            render.ctx.stroke()
+
+        return
+
+    def show(self, fractures):
+        # Draw twice, in order to give some blur effect
+        # light, thick lines
+        self.ctx.set_source_rgba(*self.light)
+        self.ctx.set_line_widht(3*self.linewidth)
+        self.drawLines(fractures.alive_fractures+fractures.dead_fractures)
+
+        # strong, thin lines
+        self.ctx.set_source_rgba(*self.front)
+        self.ctx.set_line_widht(self.linewidth)
+        self.drawLines(fractures.alive_fractures+fractures.dead_fractures)
+
+        return
+
+    
