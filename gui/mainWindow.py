@@ -110,7 +110,7 @@ class MainApp(Gtk.Window, Render):
         sourceLabel = Gtk.Label("Number of sources")
         self.sourceNumber = NumberEntry()
         self.sourceNumber.set_text("20000")
-        self.inputsDict["source"] = self.sourceNumber
+        self.inputsDict["sources"] = self.sourceNumber
         vgrid.add(sourceLabel)
         vgrid.add(self.sourceNumber)
 
@@ -214,6 +214,7 @@ class MainApp(Gtk.Window, Render):
         treeiter = combo.get_active_iter()
         if treeiter != None:
             model = combo.get_model()
+            self.domainSelection = model[treeiter][0]
             print("Selected:", model[treeiter][0])
 
     # This function will call the algorithm
@@ -225,7 +226,35 @@ class MainApp(Gtk.Window, Render):
             self.inputsDict[key].set_editable(False)
             
         print("At this point, the algorithm will be executed.")
+        self.setFractures()
+
+        return
+
+    # Sets the fractures, getting the information from the entries
+    # And filling the blanks
+    def setFractures(self):
+        from modules.fracture import Fractures
+
+        fracDot = 0.85
+        fracDst = 100./self.dareaSize
+        fracStp = 2/self.dareaSize
         
+        theFractures = Fractures(
+            int(self.inputsDict["sources"].get_text()),
+            float(self.inputsDict["size"].get_text()),
+            float(self.inputsDict["distance"].get_text()),
+            fracDot,
+            fracDst,
+            fracStp,
+            float(self.inputsDict["speed"].get_text()),
+            float(self.inputsDict["speedDiminish"].get_text()),
+            float(self.inputsDict["spawnDim"].get_text()),
+            self.domainSelection
+        )
+
+        print(theFractures.sources.shape)
+        
+        return
 
     # Functions which draws the picture
     def expose(self):
