@@ -40,11 +40,13 @@ class MainApp(Gtk.Window, Render):
         self.connect("destroy", self.__quit)
 
         # Call the input creations
+        """Grid that holds all the input data"""
         self.inputGrid = self.__createInputs()
-        # The draw area for the cairo canvas
+        """Drawing area for the Cairo canvas"""
         self.darea = Gtk.DrawingArea()
 
         # Grid for holding the drawing area (right) and the inputs
+        """Grid that holds the input data and the drawing area"""
         self.grid = Gtk.Grid()
         self.grid.add(self.inputGrid)
         self.grid.add(self.darea)
@@ -200,3 +202,9 @@ class MainApp(Gtk.Window, Render):
             
         print("At this point, the algorithm will be executed.")
         
+
+    # Functions which draws the picture
+    def expose(self):
+        cairoFrame = self.darea.get_property('window').cairo_create()
+        cairoFrame.set_source_surface(self.sur, 0, 0)
+        cairoFrame.paint()
