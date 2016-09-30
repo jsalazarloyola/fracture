@@ -234,10 +234,9 @@ class MainApp(Gtk.Window, Render):
     # And filling the blanks
     def setFractures(self):
         from modules.fracture import Fractures
+        from fn import Fn
+        fn = Fn(prefix='./res/',postfix='.2obj')
 
-        spawnFactor = float(self.inputsDict["spawnFactor"])
-        spawnAngle  = float(self.inputsDict["spawnAngle"])
-        
         fracDot = 0.85
         fracDst = 100./self.dareaSize
         fracStp = 2/self.dareaSize
@@ -261,20 +260,29 @@ class MainApp(Gtk.Window, Render):
         for _ in range(5):
             theFractures.blow(2, np.random.random(size=2))
 
-        # if there are fractures remaining yet
-        fracturesRemaining = True
-        while fracturesRemaining:
-            if not theFractures.i % 20:
-                self.show(theFractures)
-                self.expose()
-
-            theFractures.print_stats()
-            fracturesRemaining = theFractures.step(dbg=False)
-            spawned = theFractures.spawn_front(factor = spawnFactor,
-                                               angle  = spawnAngle)
-            print('spawned: {:d}'.format(spawned))
-        
+        from gi.repository import GObject
+        GObject.idle_add(self.step, theFractures, fn)
         return
+
+    def step(self, theFractures, filename):
+        spawnFactor = float(self.inputsDict["spawnFactor"])
+        spawnAngle  = float(self.inputsDict["spawnAngle"])
+        
+        # if there are fractures remaining yet
+        #fracturesRemaining = True
+        #while fracturesRemaining:
+        if not theFractures.i % 20:
+            self.show(theFractures)
+            self.write_to_png(filename.name()+'.png')
+
+        theFractures.print_stats()
+        fracturesRemaining = theFractures.step(dbg=False)
+        spawned = theFractures.spawn_front(factor = spawnFactor,
+                                               angle  = spawnAngle)
+        print('spawned: {:d}'.format(spawned))
+        self.expose()
+        
+        return fracturesRemaining
 
     # Functions which draws the picture
     def expose(self):
@@ -299,6 +307,7 @@ class MainApp(Gtk.Window, Render):
         return
 
     def show(self, fractures):
+        self.clear_canvas()
         # Draw twice, in order to give some blur effect
         # light, thick lines
         self.ctx.set_source_rgba(*self.light)
