@@ -166,7 +166,7 @@ class MainApp(Gtk.Window, Render):
         self.inputsDict["spawnFactor"] = self.spawnFactor
 
         self.spawnAngle = NumberEntry()
-        self.spawnAngle.set_text("2.0")
+        self.spawnAngle.set_text("0.2")
         self.inputsDict["spawnAngle"] = self.spawnAngle
 
         vgrid.add(Gtk.Label("Spawn factor"))
@@ -235,6 +235,9 @@ class MainApp(Gtk.Window, Render):
     def setFractures(self):
         from modules.fracture import Fractures
 
+        spawnFactor = float(self.inputsDict["spawnFactor"])
+        spawnAngle  = float(self.inputsDict["spawnAngle"])
+        
         fracDot = 0.85
         fracDst = 100./self.dareaSize
         fracStp = 2/self.dareaSize
@@ -252,7 +255,24 @@ class MainApp(Gtk.Window, Render):
             self.domainSelection
         )
 
+        # maybe this to logging.debug?
         print(theFractures.sources.shape)
+        import numpy as np
+        for _ in range(5):
+            theFractures.blow(2, np.random.random(size=2))
+
+        # if there are fractures remaining yet
+        fracturesRemaining = True
+        while fracturesRemaining:
+            if not theFractures.i % 20:
+                self.show(theFractures)
+                self.expose()
+
+            theFractures.print_stats()
+            fracturesRemaining = theFractures.step(dbg=False)
+            spawned = theFractures.spawn_front(factor = spawnFactor,
+                                               angle  = spawnAngle)
+            print('spawned: {:d}'.format(spawned))
         
         return
 
@@ -267,14 +287,14 @@ class MainApp(Gtk.Window, Render):
     # I don't know how to draw in Cairo, so I'm kind of blindfolded on this part.
     # TODO: Decide whether it's better that this were on its own drawer class, as
     #       a member of MainApp
-    def drawLines(self, fractureSet):
-        for fracture in fractureSet:
+    def drawLines(self, fractureSet, sources):
+        for frac in fractureSet:
             start = frac.inds[0]
             self.ctx.move_to(*sources[start,:])
             for c in frac.inds[1:]:
-                render.ctx.line_to(*sources[c,:])
+                self.ctx.line_to(*sources[c,:])
 
-            render.ctx.stroke()
+            self.ctx.stroke()
 
         return
 
@@ -282,13 +302,15 @@ class MainApp(Gtk.Window, Render):
         # Draw twice, in order to give some blur effect
         # light, thick lines
         self.ctx.set_source_rgba(*self.light)
-        self.ctx.set_line_widht(3*self.linewidth)
-        self.drawLines(fractures.alive_fractures+fractures.dead_fractures)
+        self.ctx.set_line_width(3*self.linewidth)
+        self.drawLines(fractures.alive_fractures+fractures.dead_fractures,
+                       fractures.sources)
 
         # strong, thin lines
         self.ctx.set_source_rgba(*self.front)
-        self.ctx.set_line_widht(self.linewidth)
-        self.drawLines(fractures.alive_fractures+fractures.dead_fractures)
+        self.ctx.set_line_width(self.linewidth)
+        self.drawLines(fractures.alive_fractures+fractures.dead_fractures,
+                       fractures.sources)
 
         return
 
