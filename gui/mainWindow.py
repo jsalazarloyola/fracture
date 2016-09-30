@@ -79,17 +79,12 @@ class MainApp(Gtk.Window, Render):
         Gtk.main()
 
     # Method for setting all the inputs in the window
-    # TODO: -Move the box to a grid
-    #       -Add labels to everything
-    #       -Figure a way to have a default value for the ComboBox
     def __createInputs(self):
         # Grid which holds the elements of the interface
         vgrid = Gtk.Grid()
         vgrid.set_orientation(Gtk.Orientation.VERTICAL)
 
         # Dictionary which holds the widgets, as the entries
-        # TODO: evaluate whether to keep the entries as dictionary only
-        #       or as members of the class
         self.inputsDict = {}
         
         # A nice example picture
@@ -107,27 +102,24 @@ class MainApp(Gtk.Window, Render):
         ########################################
         # Inputs as entries
         # Number of sources
-        sourceLabel = Gtk.Label("Number of sources")
         self.sourceNumber = NumberEntry()
         self.sourceNumber.set_text("20000")
         self.inputsDict["sources"] = self.sourceNumber
-        vgrid.add(sourceLabel)
+        vgrid.add(Gtk.Label("Number of sources"))
         vgrid.add(self.sourceNumber)
 
         # Size of the used region
-        sizeLabel = Gtk.Label("Size")
         self.sizeEntry = NumberEntry()
         self.sizeEntry.set_text("0.45")
         self.inputsDict["size"] = self.sizeEntry
-        vgrid.add(sizeLabel)
+        vgrid.add(Gtk.Label("Size"))
         vgrid.add(self.sizeEntry)
          
         # Minimum distance between sources
-        distanceLabel = Gtk.Label("Distance")
         self.distanceEntry = NumberEntry()
         self.distanceEntry.set_text(str(2/self.dareaSize))
         self.inputsDict["distance"] = self.distanceEntry
-        vgrid.add(distanceLabel)
+        vgrid.add(Gtk.Label("Distance"))
         vgrid.add(self.distanceEntry)
         
         # # Stroke width, whatever that is
@@ -225,11 +217,18 @@ class MainApp(Gtk.Window, Render):
         for key in self.inputsDict:
             self.inputsDict[key].set_editable(False)
             
-        print("At this point, the algorithm will be executed.")
         self.setFractures()
 
         return
 
+    # Function executed when the algorithm reaches its end.
+    def stoppedAlgorithm(self):
+        self.runSpinner.stop()
+        # All the fields will be reenabled
+        for key in self.inputsDict:
+            self.inputsDict[key].set_editable(True)
+        return
+        
     # Sets the fractures, getting the information from the entries
     # And filling the blanks
     def setFractures(self):
@@ -237,6 +236,8 @@ class MainApp(Gtk.Window, Render):
         from fn import Fn
         fn = Fn(prefix='./res/',postfix='.2obj')
 
+        # These things have been just defined here. I don't know if they should
+        # go also as parameters for the front-end.
         fracDot = 0.85
         fracDst = 100./self.dareaSize
         fracStp = 2/self.dareaSize
@@ -260,14 +261,21 @@ class MainApp(Gtk.Window, Render):
         for _ in range(5):
             theFractures.blow(2, np.random.random(size=2))
 
+        # In order to have it running as a low priority process.
+        # TODO: -Move this to a thread, instead of idle_add,
+        #        and see if it behaves better
         from gi.repository import GObject
         GObject.idle_add(self.step, theFractures, fn)
+
         return
 
+    # Function which advances the algorithm
     def step(self, theFractures, filename):
         spawnFactor = float(self.inputsDict["spawnFactor"])
         spawnAngle  = float(self.inputsDict["spawnAngle"])
-        
+
+        # Show progress every 20 steps
+        # (either way it will either hang or last forever
         if not theFractures.i % 20:
             self.show(theFractures)
             self.write_to_png(filename.name()+'.png')
@@ -275,10 +283,15 @@ class MainApp(Gtk.Window, Render):
         theFractures.print_stats()
         fracturesRemain = theFractures.step(dbg=False)
         spawned = theFractures.spawn_front(factor = spawnFactor,
-                                               angle  = spawnAngle)
+                                           angle  = spawnAngle)
         print('spawned: {:d}'.format(spawned))
+
+        # shows the screen
         self.expose()
 
+        # If it reached the end of the algorithm, reenables everything
+        if not fracturesRemain:
+            self.stoppedAlgorithm()
         return fracturesRemain
 
     ############################################################
@@ -292,10 +305,8 @@ class MainApp(Gtk.Window, Render):
         
         return
 
-    # Function to draw lines between sources, I pressume (addapted from main.py)
+    # Function to draw lines between sources. I pressume (addapted from main.py).
     # I don't know how to draw in Cairo, so I'm kind of blindfolded on this part.
-    # TODO: Decide whether it's better that this were on its own drawer class, as
-    #       a member of MainApp
     def drawLines(self, fractureSet, sources):
         for frac in fractureSet:
             start = frac.inds[0]
@@ -323,5 +334,3 @@ class MainApp(Gtk.Window, Render):
                        fractures.sources)
 
         return
-
-    

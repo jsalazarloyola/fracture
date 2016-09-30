@@ -3,7 +3,9 @@
 	* gui/mainWindow.py (MainApp.setFractures): Add execution of the
 	algorithm.
 	(MainApp.step): Move the execution to its own function to run when idle.
-	(MainApp.step): Add connect that allows results to be displayed.
+	(MainApp.__init__): Add connect that allows results to be displayed.
+	(MainApp.stoppedAlgorithm): Now fields are reenabled after
+	execution and spinner is stopped.
 
 2016-09-29  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
