@@ -33,7 +33,7 @@ class MainApp(Gtk.Window, Render):
         
         # Render initialization
         """Size of the drawing area (pixels)"""
-        self.dareaSize = int(height*0.9)
+        self.dareaSize = height
         """Width of the drawing lines"""
         self.linewidth = 1.1/self.dareaSize
         
@@ -56,6 +56,8 @@ class MainApp(Gtk.Window, Render):
         self.inputGrid = self.__createInputs()
         """Drawing area for the Cairo canvas"""
         self.darea = Gtk.DrawingArea()
+        self.darea.set_size_request(self.dareaSize,self.dareaSize)
+        self.darea.connect("draw", self.expose)
 
         # Grid for holding the drawing area (right) and the inputs
         """Grid that holds the input data and the drawing area"""
@@ -67,8 +69,6 @@ class MainApp(Gtk.Window, Render):
 
         # Show everything on the window
         self.show_all()
-
-        #def expose(self, widget, event):
 
     # Function to finish the program
     def __quit(self, button=None):
@@ -268,30 +268,28 @@ class MainApp(Gtk.Window, Render):
         spawnFactor = float(self.inputsDict["spawnFactor"])
         spawnAngle  = float(self.inputsDict["spawnAngle"])
         
-        # if there are fractures remaining yet
-        #fracturesRemaining = True
-        #while fracturesRemaining:
         if not theFractures.i % 20:
             self.show(theFractures)
             self.write_to_png(filename.name()+'.png')
 
         theFractures.print_stats()
-        fracturesRemaining = theFractures.step(dbg=False)
+        fracturesRemain = theFractures.step(dbg=False)
         spawned = theFractures.spawn_front(factor = spawnFactor,
                                                angle  = spawnAngle)
         print('spawned: {:d}'.format(spawned))
         self.expose()
-        
-        return fracturesRemaining
+
+        return fracturesRemain
 
     ############################################################
     # Drawing functions for the canvas
     #
     # Function that draws the picture
-    def expose(self):
+    def expose(self, *args):
         cairoFrame = self.darea.get_property('window').cairo_create()
         cairoFrame.set_source_surface(self.sur, 0, 0)
         cairoFrame.paint()
+        
         return
 
     # Function to draw lines between sources, I pressume (addapted from main.py)
