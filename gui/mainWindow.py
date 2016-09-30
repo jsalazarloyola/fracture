@@ -284,7 +284,10 @@ class MainApp(Gtk.Window, Render):
         
         return fracturesRemaining
 
-    # Functions which draws the picture
+    ############################################################
+    # Drawing functions for the canvas
+    #
+    # Function that draws the picture
     def expose(self):
         cairoFrame = self.darea.get_property('window').cairo_create()
         cairoFrame.set_source_surface(self.sur, 0, 0)
