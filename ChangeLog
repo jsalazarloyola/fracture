@@ -1,5 +1,7 @@
 2016-09-30  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
+	* README.md: Add information about the fork and the developed GUI.
+
 	* gui/mainWindow.py (MainApp.setFractures): Add execution of the
 	algorithm.
 	(MainApp.step): Move the execution to its own function to run when idle.
