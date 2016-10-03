@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import gi
+import gi, sys
 gi.require_version('Gtk', '3.0')
 
 from iutils.render import Render
@@ -274,18 +274,29 @@ class MainApp(Gtk.Window, Render):
         spawnFactor = float(self.inputsDict["spawnFactor"])
         spawnAngle  = float(self.inputsDict["spawnAngle"])
 
-        # Show progress every 20 steps
-        # (either way it will either hang or last forever
-        if not theFractures.i % 20:
-            self.show(theFractures)
-            self.write_to_png(filename.name()+'.png')
+        fracturesRemain = True
+        # Protecting dangerous execution
+        try:
+            # Show progress every 20 steps
+            # (either way it will either hang or last forever
+            if not theFractures.i % 20:
+                self.show(theFractures)
+                self.write_to_png(filename.name()+'.png')
 
-        theFractures.print_stats()
-        fracturesRemain = theFractures.step(dbg=False)
-        spawned = theFractures.spawn_front(factor = spawnFactor,
-                                           angle  = spawnAngle)
-        print('spawned: {:d}'.format(spawned))
+            theFractures.print_stats()
+            fracturesRemain = theFractures.step(dbg=False)
+            spawned = theFractures.spawn_front(factor = spawnFactor,
+                                               angle  = spawnAngle)
+            print('spawned: {:d}'.format(spawned))
 
+        except:
+            # On exception, prints error message, resets the fields and
+            # returns False, in order to release the idle functions of GTK.
+            print("Unexpected error:", sys.exc_info()[0])
+            print("Traceback:\n", sys.exc_info()[2])
+            self.stoppedAlgorithm()
+            return False
+        
         # shows the screen
         self.expose()
 

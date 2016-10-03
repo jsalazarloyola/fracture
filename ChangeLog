@@ -1,3 +1,8 @@
+2016-10-03  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
+
+	* gui/mainWindow.py (MainApp.step): Add exception handler for
+	errors in the algorithm.
+
 2016-09-30  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
 	* README.md: Add information about the fork and the developed GUI.
