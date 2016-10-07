@@ -90,11 +90,18 @@ class MainApp(Gtk.Window, Render):
         # A nice example picture
         # TODO: get a smaller picture
         from gi.repository import GdkPixbuf
-        imageName = './img/img1.png'
-        imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
-                                                            width=150,
-                                                            height=150,
-                                                            preserve_aspect_ratio=True)
+        try:
+            imageName = './img/img1.png'
+            imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
+                                                                width=150,
+                                                                height=150,
+                                                                preserve_aspect_ratio=True)
+        except:
+            imageName = './img/img1.jpg'
+            imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
+                                                                width=150,
+                                                                height=150,
+                                                                preserve_aspect_ratio=True)
         image = Gtk.Image()
         image.set_from_pixbuf(imageBuff)
         vgrid.add(image)
