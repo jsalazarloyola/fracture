@@ -91,20 +91,23 @@ class MainApp(Gtk.Window, Render):
         # TODO: get a smaller picture
         from gi.repository import GdkPixbuf
         try:
-            imageName = './img/img1.png'
+            imageName = './img/img1.png.'
             imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
                                                                 width=150,
                                                                 height=150,
                                                                 preserve_aspect_ratio=True)
         except:
-            imageName = './img/img1.jpg'
-            imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
-                                                                width=150,
-                                                                height=150,
-                                                                preserve_aspect_ratio=True)
-        image = Gtk.Image()
-        image.set_from_pixbuf(imageBuff)
-        vgrid.add(image)
+            # imageName = './img/img1.jpg'
+            # imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
+            #                                                     width=150,
+            #                                                     height=150,
+            #                                                     preserve_aspect_ratio=True)
+            print("Warning: could not handle the picture. \
+            It will not be displayed")
+        else:
+            image = Gtk.Image()
+            image.set_from_pixbuf(imageBuff)
+            vgrid.add(image)
 
         ########################################
         # Inputs as entries
