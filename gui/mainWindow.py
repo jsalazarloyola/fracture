@@ -197,7 +197,6 @@ class MainApp(Gtk.Window, Render):
         vgrid.add(domainLabel)
         vgrid.add(self.domain)
 
-        
         # End of function
         return vgrid
         
@@ -215,12 +214,26 @@ class MainApp(Gtk.Window, Render):
         vgrid.add(startButton)
         vgrid.add(self.runSpinner)
 
+        # Pause/continue button
+        pauseButton = Gtk.ToggleButton("Pause")
+        pauseButton.connect("toggled", self.__onButtonToggled, "pause")
+        vgrid.add(pauseButton)
+
         # Close button, just in case
         closeButton = Gtk.Button.new_with_label("Close")
         closeButton.connect("clicked", self.__quit)
         vgrid.add(closeButton)
 
         return vgrid
+
+    # When the pause button has been toggled
+    def __onButtonToggled(self, button, name):
+        if button.get_active():
+            state = "on"
+        else:
+            state = "off"
+        print("Button was turned", state)
+            
     # What to do when the selection changes in the list of domain options
     def onSelectionChange(self, combo):
         treeiter = combo.get_active_iter()
