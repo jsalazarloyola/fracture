@@ -5,7 +5,9 @@ import gi, sys
 gi.require_version('Gtk', '3.0')
 
 from iutils.render import Render
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf, GObject
+
+import numpy as np
 
 from gui.widgets import NumberEntry
 
@@ -92,21 +94,17 @@ class MainApp(Gtk.Window, Render):
         
         # A nice example picture
         # TODO: get a smaller picture
-        from gi.repository import GdkPixbuf
         try:
-            imageName = './img/img1.png.'
+            imageName = './img/img1.png'
             imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
                                                                 width=150,
                                                                 height=150,
                                                                 preserve_aspect_ratio=True)
         except:
-            # imageName = './img/img1.jpg'
-            # imageBuff = GdkPixbuf.Pixbuf.new_from_file_at_scale(imageName,
-            #                                                     width=150,
-            #                                                     height=150,
-            #                                                     preserve_aspect_ratio=True)
             print("Warning: could not handle the picture. \
             It will not be displayed")
+            print("The error:", sys.exc_info()[1])
+            
         else:
             image = Gtk.Image()
             image.set_from_pixbuf(imageBuff)
@@ -135,13 +133,6 @@ class MainApp(Gtk.Window, Render):
         vgrid.add(Gtk.Label("Distance"))
         vgrid.add(self.distanceEntry)
         
-        # # Stroke width, whatever that is
-        # self.strokeWidth = NumberEntry()
-        # self.strokeWidth.set_text("Stroke")
-        # self.inputsDict["stroke"] = self.strokeWidth
-        # vgrid.add(Gtk.Label("Stroke width"))
-        # vgrid.add(self.strokeWidth)
-
         ########################################
         # Frequency information
         # Speed of fracture
@@ -219,6 +210,11 @@ class MainApp(Gtk.Window, Render):
         pauseButton.connect("toggled", self.__onButtonToggled, "pause")
         vgrid.add(pauseButton)
 
+        # Save button
+        saveButton = Gtk.Button("Export picture")
+        saveButton.connect("clicked", self.__onExportClicked)
+        vgrid.add(saveButton)
+        
         # Close button, just in case
         closeButton = Gtk.Button.new_with_label("Close")
         closeButton.connect("clicked", self.__quit)
@@ -235,7 +231,24 @@ class MainApp(Gtk.Window, Render):
             state = "off"
             button.set_label("Pause")
         print("Button was turned", state)
-            
+        return
+
+    # Function which handles the exporting of images
+    def __onExportClicked(self, button):
+        dialog = Gtk.FileChooserDialog("Please choose a file",
+                                       self, Gtk.FileChooserAction.SAVE,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            print("Save clicked")
+            print("File selected: " + dialog.get_filename())
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+        dialog.destroy()
+        return
+                
     # What to do when the selection changes in the list of domain options
     def onSelectionChange(self, combo):
         treeiter = combo.get_active_iter()
@@ -292,14 +305,12 @@ class MainApp(Gtk.Window, Render):
 
         # maybe this to logging.debug?
         print(theFractures.sources.shape)
-        import numpy as np
         for _ in range(5):
             theFractures.blow(2, np.random.random(size=2))
 
         # In order to have it running as a low priority process.
         # TODO: -Move this to a thread, instead of idle_add,
         #        and see if it behaves better
-        from gi.repository import GObject
         GObject.idle_add(self.step, theFractures, fn)
 
         return
