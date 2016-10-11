@@ -58,12 +58,15 @@ class MainApp(Gtk.Window, Render):
         self.darea = Gtk.DrawingArea()
         self.darea.set_size_request(self.dareaSize,self.dareaSize)
         self.darea.connect("draw", self.expose)
+        """Grid that holds all the buttons"""
+        self.buttonsGrid = self.__createButtons()
 
         # Grid for holding the drawing area (right) and the inputs
         """Grid that holds the input data and the drawing area"""
         self.grid = Gtk.Grid()
         self.grid.add(self.inputGrid)
         self.grid.add(self.darea)
+        self.grid.add(self.buttonsGrid)
         
         self.add(self.grid)
 
@@ -194,6 +197,15 @@ class MainApp(Gtk.Window, Render):
         vgrid.add(domainLabel)
         vgrid.add(self.domain)
 
+        
+        # End of function
+        return vgrid
+        
+    def __createButtons(self):
+        # Grid which holds the elements of the interface
+        vgrid = Gtk.Grid()
+        vgrid.set_orientation(Gtk.Orientation.VERTICAL)
+
         ########################################
         # Start algorithm button
         startButton = Gtk.Button.new_with_label("Start")
@@ -207,10 +219,8 @@ class MainApp(Gtk.Window, Render):
         closeButton = Gtk.Button.new_with_label("Close")
         closeButton.connect("clicked", self.__quit)
         vgrid.add(closeButton)
-        
-        # End of function
+
         return vgrid
-        
     # What to do when the selection changes in the list of domain options
     def onSelectionChange(self, combo):
         treeiter = combo.get_active_iter()
