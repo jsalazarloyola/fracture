@@ -25,6 +25,9 @@ class MainApp(Gtk.Window, Render):
         # Window initialization
         Gtk.Window.__init__(self)
 
+        """If it's currently running"""
+        self.stateOn = False
+        
         """Front line colors"""
         self.front = front
         """Light color
@@ -207,7 +210,7 @@ class MainApp(Gtk.Window, Render):
 
         # Pause/continue button
         pauseButton = Gtk.ToggleButton("Pause")
-        pauseButton.connect("toggled", self.__onButtonToggled, "pause")
+        pauseButton.connect("toggled", self.__onPauseToggled, "pause")
         vgrid.add(pauseButton)
 
         # Save button
@@ -223,14 +226,18 @@ class MainApp(Gtk.Window, Render):
         return vgrid
 
     # When the pause button has been toggled
-    def __onButtonToggled(self, button, name):
+    def __onPauseToggled(self, button, name):
         if button.get_active():
-            state = "on"
+            # On pause, algorithm is removed from low priority queue
+            self.stateOn = False
             button.set_label("Continue")
+            print("DEBUG: Algorithm execution paused")
         else:
-            state = "off"
+            # If continue, add algorithm again to low priority queue
+            self.stateOn = True
+            GObject.idle_add(self.step, self.theFractures, self.fn)
             button.set_label("Pause")
-        print("Button was turned", state)
+            print("DEBUG: Algorithm execution resumed")
         return
 
     # Function which handles the exporting of images
@@ -282,7 +289,7 @@ class MainApp(Gtk.Window, Render):
     def setFractures(self):
         from modules.fracture import Fractures
         from fn import Fn
-        fn = Fn(prefix='./res/',postfix='.2obj')
+        self.fn = Fn(prefix='./res/',postfix='.2obj')
 
         # These things have been just defined here. I don't know if they should
         # go also as parameters for the front-end.
@@ -290,7 +297,7 @@ class MainApp(Gtk.Window, Render):
         fracDst = 100./self.dareaSize
         fracStp = 2/self.dareaSize
         
-        theFractures = Fractures(
+        self.theFractures = Fractures(
             int(self.inputsDict["sources"]),
             float(self.inputsDict["size"]),
             float(self.inputsDict["distance"]),
@@ -304,19 +311,23 @@ class MainApp(Gtk.Window, Render):
         )
 
         # maybe this to logging.debug?
-        print(theFractures.sources.shape)
+        print(self.theFractures.sources.shape)
         for _ in range(5):
-            theFractures.blow(2, np.random.random(size=2))
+            self.theFractures.blow(2, np.random.random(size=2))
 
         # In order to have it running as a low priority process.
         # TODO: -Move this to a thread, instead of idle_add,
         #        and see if it behaves better
-        GObject.idle_add(self.step, theFractures, fn)
+        self.stateOn = True
+        GObject.idle_add(self.step, self.theFractures, self.fn)
 
         return
 
     # Function which advances the algorithm
     def step(self, theFractures, filename):
+        if not self.stateOn:
+            return False
+        
         spawnFactor = float(self.inputsDict["spawnFactor"])
         spawnAngle  = float(self.inputsDict["spawnAngle"])
 

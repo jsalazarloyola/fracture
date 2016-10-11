@@ -4,6 +4,8 @@
 	(MainApp): Moved buttons to __createButtons method.
 	Add Pause toggle button with basic functionality.
 	(MainApp.__onExportClicked): Add basic save dialog.
+	(MainApp.__init__): Add member to define if algorithm is running.
+	(MainApp.__onPauseToggled): Add pause for algorithm execution.
 
 2016-10-07  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
