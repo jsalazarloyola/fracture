@@ -230,8 +230,10 @@ class MainApp(Gtk.Window, Render):
     def __onButtonToggled(self, button, name):
         if button.get_active():
             state = "on"
+            button.set_label("Continue")
         else:
             state = "off"
+            button.set_label("Pause")
         print("Button was turned", state)
             
     # What to do when the selection changes in the list of domain options
