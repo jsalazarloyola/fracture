@@ -35,10 +35,17 @@ This fork has been developed by Javier Salazar Loyola
 ([@feandir](https://twitter.com/feandir)), in order to add a front-end
 to the algorithm, via a GUI with GTK3 for Python.
 
+## Added features
+Export function, in order to save current drawing to PNG or SVG.
+
 ## TODO
 
 *    There are some more parameters which can be configured.
-*    Fix layout of the screen (too wide for the canvas)
 *    Figure out if there is a way to change the size of the Cairo
      canvas on the fly, in order to change the size of the picture.
-*    Define if it can be changed the save file format.
+*    Remove dependency on fn-python to name files or modify it in
+     order to remove dependency on git
+*    Add some threads to handle algorithm execution. Algorithm is slow
+     and that affects the interface performance.
+*    Move algorithm handling to a new class in order to give a greater
+     independence to both algorithm and main window.
