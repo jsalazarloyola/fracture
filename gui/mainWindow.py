@@ -22,7 +22,7 @@ class MainApp(Gtk.Window, Render):
     def __init__(self,
                  front, back, light,
                  step=None,
-                 width=1200, height=700):
+                 width=1000, height=700):
         # Window initialization
         Gtk.Window.__init__(self)
 

@@ -2,6 +2,9 @@
 
 	* gui/mainWindow.py (MainApp): Add save function to export to PNG
 	and SVG.
+	(MainApp.__init__): Change default size in order to not have
+	useless space.
+
 	* gui/widgets.py: Add ExportDialog class for creating a custom
 	save file dialog.
 
