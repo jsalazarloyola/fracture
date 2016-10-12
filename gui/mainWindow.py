@@ -8,6 +8,7 @@ from iutils.render import Render
 from gi.repository import Gtk, GdkPixbuf, GObject
 
 import numpy as np
+import cairo
 
 from gui.widgets import NumberEntry, ExportDialog
 
@@ -249,6 +250,7 @@ class MainApp(Gtk.Window, Render):
             print("Save clicked")
             print("File selected: " + dialog.get_filename())
             print("File type: " + dialog.getFileType())
+            self.save(dialog.get_filename(), dialog.getFileType())
         elif response == Gtk.ResponseType.CANCEL:
             print("Cancel clicked")
         dialog.destroy()
@@ -365,8 +367,11 @@ class MainApp(Gtk.Window, Render):
     #
     # Function that draws the picture
     def expose(self, *args):
+        # Creates frame for the drawing area
         cairoFrame = self.darea.get_property('window').cairo_create()
+        # Copy the drawing from the surface where it's being done
         cairoFrame.set_source_surface(self.sur, 0, 0)
+        # Paint the frame
         cairoFrame.paint()
         
         return
@@ -400,3 +405,35 @@ class MainApp(Gtk.Window, Render):
                        fractures.sources)
 
         return
+
+    def save(self, filename, filetype):
+        """Function which handles the export of the pictures"""
+
+        # If the file doesn't contain the extension, it's added
+        if filename[-4:] != filetype:
+            filename += filetype
+
+        # Save PNG
+        if filetype==".png":
+            # Calls Render.write_to_png
+            self.write_to_png(filename)
+        # Save SVG
+        elif filetype==".svg":
+            # Calls mainWindow.write_to_svg
+            self.write_to_svg(filename)
+
+        return
+
+    def write_to_svg(self,filename):
+        # Create the SVG surface
+        # This creates the file on disc automatically)
+        svgSurface = cairo.SVGSurface(filename, self.dareaSize, self.dareaSize)
+        # Create cairo frame to this surface
+        cairoFrame = cairo.Context(svgSurface)
+        # Copy surface where the drawing is made to this frame
+        cairoFrame.set_source_surface(self.sur, 0, 0)
+        # Paint the frame. Now it's saved on disk
+        cairoFrame.paint()
+        
+        return
+        

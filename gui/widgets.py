@@ -77,9 +77,14 @@ class ExportDialog(Gtk.FileChooserDialog):
         # Sets filters for images
         self.setFilters()
 
+        # Sets to confirm if an overwrite is to occur
+        self.set_do_overwrite_confirmation(True)
+
         return
 
     def setFilters(self):
+        """Method which sets the default filters for this save dialog"""
+        
         """Dictionary that holds the filter list with its associated extensions"""
         self.filters = {}
 
@@ -100,4 +105,5 @@ class ExportDialog(Gtk.FileChooserDialog):
         return
 
     def getFileType(self):
+        """Gets the file extension from the dictionary"""
         return self.filters[self.get_filter().get_name()]
