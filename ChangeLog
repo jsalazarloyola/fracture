@@ -1,3 +1,8 @@
+2016-10-12  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
+
+	* gui/widgets.py: Add ExportDialog class for creating a custom
+	save file dialog.
+
 2016-10-11  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
 	* gui/mainWindow.py: Move import to the head of the file.

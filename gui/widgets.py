@@ -53,3 +53,51 @@ class NumberEntry(Gtk.Entry):
     def __float__(self):
         """Cast the content to float"""
         return float(self.get_text())
+
+
+class ExportDialog(Gtk.FileChooserDialog):
+    """Class which handles name finding for exportation of pictures
+
+    This class extends Gtk.FileChooserDialog in order to take into account
+    that the fracture images could be exported to PNG or SVG formats.
+
+    It creates the Gtk.FileChooserDialog and sets all its features so the
+    main window doesn't have to set it for itself, while also allowing
+    further configuration through normal methods of the base class.
+    """
+    def __init__(self, message, parent=None):
+        buttons = (Gtk.STOCK_CANCEL,
+                   Gtk.ResponseType.CANCEL,
+                   Gtk.STOCK_OPEN,
+                   Gtk.ResponseType.OK)
+        Gtk.FileChooserDialog.__init__(self, message, parent,
+                                       Gtk.FileChooserAction.SAVE,
+                                       buttons)
+
+        # Sets filters for images
+        self.setFilters()
+
+        return
+
+    def setFilters(self):
+        """Dictionary that holds the filter list with its associated extensions"""
+        self.filters = {}
+
+        # Filter for PNG images
+        filterPng = Gtk.FileFilter()
+        filterPng.set_name("PNG images")
+        filterPng.add_mime_type("image/png")
+        self.add_filter(filterPng)
+        self.filters[filterPng.get_name()] = ".png"
+
+        # Filter for SVG images
+        filterSvg = Gtk.FileFilter()
+        filterSvg.set_name("SVG images")
+        filterSvg.add_mime_type("image/svg+xml")
+        self.add_filter(filterSvg)
+        self.filters[filterSvg.get_name()] = ".svg"
+        
+        return
+
+    def getFileType(self):
+        return self.filters[self.get_filter().get_name()]

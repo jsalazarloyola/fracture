@@ -9,7 +9,7 @@ from gi.repository import Gtk, GdkPixbuf, GObject
 
 import numpy as np
 
-from gui.widgets import NumberEntry
+from gui.widgets import NumberEntry, ExportDialog
 
 class MainApp(Gtk.Window, Render):
     """Main window for the program
@@ -242,15 +242,13 @@ class MainApp(Gtk.Window, Render):
 
     # Function which handles the exporting of images
     def __onExportClicked(self, button):
-        dialog = Gtk.FileChooserDialog("Please choose a file",
-                                       self, Gtk.FileChooserAction.SAVE,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                        Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-
+        dialog = ExportDialog("Please choose a file", self)
+        
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             print("Save clicked")
             print("File selected: " + dialog.get_filename())
+            print("File type: " + dialog.getFileType())
         elif response == Gtk.ResponseType.CANCEL:
             print("Cancel clicked")
         dialog.destroy()
