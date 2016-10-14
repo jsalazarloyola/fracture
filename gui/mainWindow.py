@@ -272,23 +272,32 @@ class MainApp(Gtk.Window, Render):
 
     # This function will call the algorithm
     def startAlgorithm(self, button):
-        # Remember in the future to stop spinning
-        self.runSpinner.start()
-        # All the fields will be disabled
-        for key in self.inputsDict:
-            self.inputsDict[key].set_editable(False)
+        if self.stateOn:
+            self.stoppedAlgorithm()
+            self.buttons["start"].set_label("Start")
+        else:
+            # Remember in the future to stop spinning
+            self.runSpinner.start()
+            # All the fields will be disabled
+            for key in self.inputsDict:
+                self.inputsDict[key].set_editable(False)
 
-        self.buttons["pause"].set_sensitive(True)
-        self.setFractures()
+            self.buttons["pause"].set_sensitive(True)
+            self.setFractures()
+            self.buttons["start"].set_label("Stop")
 
         return
 
-    # Function executed when the algorithm reaches its end.
+    # Function executed when the algorithm reaches its end
+    # or the user has invoked an explicit stop
     def stoppedAlgorithm(self):
+        self.stateOn = False
         self.runSpinner.stop()
         # All the fields will be reenabled
         for key in self.inputsDict:
             self.inputsDict[key].set_editable(True)
+
+        self.buttons["pause"].set_sensitive(False)
         return
         
     # Sets the fractures, getting the information from the entries
