@@ -273,8 +273,7 @@ class MainApp(Gtk.Window, Render):
     # This function will call the algorithm
     def startAlgorithm(self, button):
         if self.stateOn:
-            self.stoppedAlgorithm()
-            self.buttons["start"].set_label("Start")
+            self.stopAlgorithm()
         else:
             # Remember in the future to stop spinning
             self.runSpinner.start()
@@ -290,9 +289,11 @@ class MainApp(Gtk.Window, Render):
 
     # Function executed when the algorithm reaches its end
     # or the user has invoked an explicit stop
-    def stoppedAlgorithm(self):
+    def stopAlgorithm(self):
         self.stateOn = False
         self.runSpinner.stop()
+        self.buttons["start"].set_label("Start")
+
         # All the fields will be reenabled
         for key in self.inputsDict:
             self.inputsDict[key].set_editable(True)
@@ -367,7 +368,7 @@ class MainApp(Gtk.Window, Render):
             # returns False, in order to release the idle functions of GTK.
             print("Unexpected error:", sys.exc_info()[0])
             print("Traceback:\n", sys.exc_info()[2])
-            self.stoppedAlgorithm()
+            self.stopAlgorithm()
             return False
         
         # shows the screen
@@ -375,7 +376,7 @@ class MainApp(Gtk.Window, Render):
 
         # If it reached the end of the algorithm, reenables everything
         if not fracturesRemain:
-            self.stoppedAlgorithm()
+            self.stopAlgorithm()
         return fracturesRemain
 
     ############################################################

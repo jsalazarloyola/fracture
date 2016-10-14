@@ -3,6 +3,7 @@
 	* gui/mainWindow.py (MainApp.__createButtons): Set pause button as
 	disabled at start and enable it after algorithm started.
 	(MainApp.startAlgorithm): Add stop mechanism.
+	(MainApp.stopAlgorithm): Change name to a more meaningfull one.
 
 2016-10-12  Javier Esteban Salazar Loyola  <jsalazarloyola@gmail.com>
 
