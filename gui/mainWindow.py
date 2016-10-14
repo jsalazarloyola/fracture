@@ -200,11 +200,13 @@ class MainApp(Gtk.Window, Render):
         vgrid = Gtk.Grid()
         vgrid.set_orientation(Gtk.Orientation.VERTICAL)
 
+        self.buttons = {}
         ########################################
         # Start algorithm button
         startButton = Gtk.Button.new_with_label("Start")
         startButton.connect("clicked", self.startAlgorithm)
         self.runSpinner = Gtk.Spinner()
+        self.buttons["start"] = startButton
 
         vgrid.add(startButton)
         vgrid.add(self.runSpinner)
@@ -212,17 +214,21 @@ class MainApp(Gtk.Window, Render):
         # Pause/continue button
         pauseButton = Gtk.ToggleButton("Pause")
         pauseButton.connect("toggled", self.__onPauseToggled, "pause")
+        pauseButton.set_sensitive(False)
         vgrid.add(pauseButton)
-
+        self.buttons["pause"] = pauseButton
+                    
         # Save button
         saveButton = Gtk.Button("Export picture")
         saveButton.connect("clicked", self.__onExportClicked)
         vgrid.add(saveButton)
+        self.buttons["save"] = saveButton
         
         # Close button, just in case
         closeButton = Gtk.Button.new_with_label("Close")
         closeButton.connect("clicked", self.__quit)
         vgrid.add(closeButton)
+        self.buttons["close"] = closeButton
 
         return vgrid
 
@@ -271,7 +277,8 @@ class MainApp(Gtk.Window, Render):
         # All the fields will be disabled
         for key in self.inputsDict:
             self.inputsDict[key].set_editable(False)
-            
+
+        self.buttons["pause"].set_sensitive(True)
         self.setFractures()
 
         return
